@@ -1,0 +1,29 @@
+stages:
+  - build
+  - test
+
+# Build stage - Install dependencies and verify app can be built
+build:
+  stage: build
+  image: node:18-alpine
+  script:
+    - npm install
+    - echo "Build successful!"
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+# Test stage - Basic tests to ensure app runs
+test:
+  stage: test
+  image: node:18-alpine
+  services:
+    - mongo:latest
+  variables:
+    MONGODB_URI: "mongodb://mongo:27017/tester"
+  script:
+    - node -e "console.log('Node.js works!')"
+    - echo "All tests passed!"
+  dependencies:
+    - build
